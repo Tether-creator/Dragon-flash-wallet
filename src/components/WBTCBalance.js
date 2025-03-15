@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import WBTCABI from '../utils/WBTC_ABI.json';
@@ -31,7 +31,7 @@ export default function WBTCBalance() {
 
   return (
     <div style={{ marginTop: '20px', fontSize: '1.2rem' }}>
-      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol} : 'Loading...'}
+      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol}' : 'Loading...'}
     </div>
   );
 }
