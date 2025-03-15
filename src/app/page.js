@@ -1,31 +1,32 @@
 'use client';
 
 import { useState } from 'react';
+import WBTCBalance from '../components/WBTCBalance';
 
 export default function Home() {
-  const [wallet, setWallet] = useState(null);
+  const [walletAddress, setWalletAddress] = useState('');
 
   const connectWallet = async () => {
     if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setWallet(accounts[0]);
-      } catch (err) {
-        console.error(err);
-      }
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      setWalletAddress(accounts[0]);
     } else {
-      alert('Please install MetaMask or a Web3 wallet');
+      alert('Please install MetaMask');
     }
   };
 
   return (
-    <main style={{ textAlign: 'center' }}>
-      <img src="/dragon-logo.png" alt="Dragon Flash Logo" style={{ width: 150, marginBottom: 20 }} />
+    <main style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#000', color: '#fff', minHeight: '100vh' }}>
+      <img src="/dragon-logo.png" alt="Dragon Flash Logo" width="200" style={{ marginBottom: '20px' }} />
       <h1>Dragon Flash Wallet</h1>
-      {!wallet ? (
-        <button onClick={connectWallet}>Connect Wallet</button>
+
+      {!walletAddress ? (
+        <button onClick={connectWallet} style={{ padding: '10px 20px', marginTop: '20px' }}>Connect Wallet</button>
       ) : (
-        <p>Wallet Connected: {wallet}</p>
+        <>
+          <p>Connected: {walletAddress}</p>
+          <WBTCBalance walletAddress={walletAddress} />
+        </>
       )}
     </main>
   );
