@@ -1,16 +1,31 @@
 'use client';
 
-import React from 'react';
-import Image from 'next/image';
-import './globals.css';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [wallet, setWallet] = useState(null);
+
+  const connectWallet = async () => {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setWallet(accounts[0]);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      alert('Please install MetaMask or a Web3 wallet');
+    }
+  };
+
   return (
-    <main className="container">
-      <Image src="/dragon-logo.png" alt="Dragon Flash Logo" width={120} height={120} />
+    <main>
       <h1>Dragon Flash Wallet</h1>
-      <p>Connect your wallet to view and interact with your custom tokens.</p>
-      <button className="connect-button">Connect Wallet</button>
+      {!wallet ? (
+        <button onClick={connectWallet}>Connect Wallet</button>
+      ) : (
+        <p>Wallet Connected: {wallet}</p>
+      )}
     </main>
   );
 }
