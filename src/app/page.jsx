@@ -1,12 +1,12 @@
 'use client';
+import React from 'react';
+import WBTCBalance from '../components/WBTCBalance';
 
-import WBTCBalance from '../../components/WBTCBalance';
-
-export default function Page() {
+export default function Home() {
   return (
-    <main style={{ padding: '20px', backgroundColor: '#0f0f0f', minHeight: '100vh', color: 'white' }}>
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h1>Dragon Flash Wallet</h1>
       <WBTCBalance />
-    </main>
+    </div>
   );
 }
