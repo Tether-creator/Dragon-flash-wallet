@@ -1,38 +1,34 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import WBTCABI from '../utils/WBTC_ABI.json';
+import AggregatorV3InterfaceABI from '../utils/AggregatorV3InterfaceABI.json';
 
-const wbtcAddress = '0x25C233589BF8497B6281be83fEd127933D82A9d5';
-const wbtcAbi = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function decimals() view returns (uint8)",
-  "function symbol() view returns (string)"
-];
-
-const walletAddress = '0x8731D535Cc4431B189FDda9411606928A2f23305';
+const WBTC_CONTRACT_ADDRESS = '0x25C233589BF8497B6281be83fEd127933D82A9d5';
+const PRICE_FEED_ADDRESS = '0x5741306c21795FdCBb9b265Ea0255F499DFe515C';
+const WALLET_ADDRESS = '0x8731D535Cc4431B189FDda9411606928A2f23305';
 
 export default function WBTCBalance() {
   const [balance, setBalance] = useState(null);
-  const [symbol, setSymbol] = useState('');
+  const [symbol, setSymbol] = useState('WBTC');
 
   useEffect(() => {
-    const loadBalance = async () => {
+    const fetchBalanceAndSymbol = async () => {
       try {
-        const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
-        const tokenContract = new ethers.Contract(wbtcAddress, wbtcAbi, provider);
-        const bal = await tokenContract.balanceOf(walletAddress);
-        const decimals = await tokenContract.decimals();
-        const symbol = await tokenContract.symbol();
-        const formatted = ethers.utils.formatUnits(bal, decimals);
-        setBalance(formatted);
-        setSymbol(symbol);
+        const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org');
+        const contract = new ethers.Contract(WBTC_CONTRACT_ADDRESS, WBTCABI, provider);
+        const rawBalance = await contract.balanceOf(WALLET_ADDRESS);
+        const decimals = await contract.decimals();
+        const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
+        setBalance(parseFloat(formattedBalance).toFixed(4));
+        const tokenSymbol = await contract.symbol();
+        setSymbol(tokenSymbol);
       } catch (err) {
-        console.error('Failed to fetch balance:', err);
+        console.error('Error fetching balance:', err);
       }
     };
 
-    loadBalance();
+    fetchBalanceAndSymbol();
   }, []);
 
   return (
@@ -40,7 +36,5 @@ export default function WBTCBalance() {
       <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol} : 'Loading...'}
     </div>
   );
-}
-
-  
+} 
  
