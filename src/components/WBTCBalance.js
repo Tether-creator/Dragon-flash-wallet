@@ -1,31 +1,45 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import AggregatorV3InterfaceABI from '../utils/AggregatorV3InterfaceABI.json';
 
-const WBTC_ABI = [
-  "function balanceOf(address owner) view returns (uint)",
-  "function symbol() view returns (string)"
-];
-
-const WBTC_ADDRESS = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"; // WBTC on Ethereum
-
-export default function WBTCBalance({ walletAddress }) {
+const WBTCBalance = ({ walletAddress }) => {
   const [balance, setBalance] = useState(null);
   const [symbol, setSymbol] = useState('WBTC');
 
+  const wbtcContractAddress = '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c'; // WBTC on BSC
+  const chainlinkWBTCUSD = '0x5741306c21795FdCBb9b265Ea0255F499DFe515C'; // Chainlink WBTC/USD on BSC
+
+  const erc20ABI = [
+    'function balanceOf(address) view returns (uint)',
+    'function decimals() view returns (uint8)',
+    'function symbol() view returns (string)'
+  ];
+
   useEffect(() => {
     const fetchBalance = async () => {
-      if (!walletAddress) return;
+      try {
+        const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
+        const tokenContract = new ethers.Contract(wbtcContractAddress, erc20ABI, provider);
+        const oracleContract = new ethers.Contract(chainlinkWBTCUSD, AggregatorV3InterfaceABI, provider);
 
-      const provider = new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/YOUR_INFURA_KEY");
-      const contract = new ethers.Contract(WBTC_ADDRESS, WBTC_ABI, provider);
+        const [rawBalance, decimals, tokenSymbol, roundData] = await Promise.all([
+          tokenContract.balanceOf(walletAddress),
+          tokenContract.decimals(),
+          tokenContract.symbol(),
+          oracleContract.latestRoundData()
+        ]);
 
-      const rawBalance = await contract.balanceOf(walletAddress);
-      const tokenSymbol = await contract.symbol();
+        const formatted = ethers.utils.formatUnits(rawBalance, decimals);
+        const price = parseFloat(roundData.answer) / 1e8;
 
-      const formatted = ethers.utils.formatUnits(rawBalance, 8); // WBTC has 8 decimals
-      setBalance(formatted);
-      setSymbol(tokenSymbol);
+        const balanceInUSD = (parseFloat(formatted) * price).toFixed(2);
+        setSymbol(tokenSymbol);
+        setBalance(balanceInUSD);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      }
     };
 
     fetchBalance();
@@ -33,7 +47,10 @@ export default function WBTCBalance({ walletAddress }) {
 
   return (
     <div style={{ marginTop: '20px', fontSize: '1.2rem' }}>
-      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol} : 'Loading...'}
+      <strong>WBTC Balance:</strong>{' '}
+      {balance ? ${balance} USD (${symbol}) : 'Loading...'}
     </div>
   );
-}
+};
+
+export default WBTCBalance;
