@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
   const [wallet, setWallet] = useState(null);
@@ -19,7 +19,8 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <main style={{ textAlign: 'center' }}>
+      <img src="/dragon-logo.png" alt="Dragon Flash Logo" style={{ width: 150, marginBottom: 20 }} />
       <h1>Dragon Flash Wallet</h1>
       {!wallet ? (
         <button onClick={connectWallet}>Connect Wallet</button>
