@@ -31,13 +31,4 @@ export default function Home() {
     </main>
   );
 }
-import WBTCBalance from '../components/WBTCBalance';
 
-export default function Page() {
-  return (
-    <main>
-      <h1>Dragon Flash Wallet</h1>
-      <WBTCBalance />
-    </main>
-  );
-}
