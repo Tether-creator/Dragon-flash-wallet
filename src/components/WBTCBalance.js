@@ -16,10 +16,10 @@ export default function WBTCBalance({ walletAddress }) {
         const contract = new ethers.Contract(WBTC_ADDRESS, erc20ABI, provider);
         const rawBalance = await contract.balanceOf(walletAddress);
         const decimals = await contract.decimals();
-        const symbol = await contract.symbol();
+        const tokenSymbol = await contract.symbol();
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
         setBalance(parseFloat(formattedBalance).toFixed(4));
-        setSymbol(symbol);
+        setSymbol(tokenSymbol);
       } catch (error) {
         console.error('Error fetching WBTC balance:', error);
       }
@@ -30,7 +30,7 @@ export default function WBTCBalance({ walletAddress }) {
 
   return (
     <div style={{ marginTop: '20px', fontSize: '1.2rem' }}>
-      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol}' : ',Loading...'}
+      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol}':'Loading...'}
     </div>
   );
 }
