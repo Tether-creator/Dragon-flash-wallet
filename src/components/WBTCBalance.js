@@ -30,7 +30,7 @@ export default function WBTCBalance({ walletAddress }) {
 
   return (
     <div style={{ marginTop: '20px', fontSize: '1.2rem' }}>
-      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol}':'Loading...'}
+      <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol}':',Loading...'}
     </div>
   );
 }
