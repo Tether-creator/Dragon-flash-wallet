@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import ERC20ABI from '../abi/erc20ABI.json';
+import ERC20ABI from '../utils/erc20ABI.json';
 
 const WBTC_CONTRACT_ADDRESS = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'; // WBTC on Ethereum Mainnet
 const WALLET_ADDRESS = '0x8731D535Cc4431B189FDda9411606928A2f23305'; // Your wallet
