@@ -1,34 +1,31 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import ERC20ABI from '../utils/erc20ABI.json';
+import erc20ABI from '../utils/erc20ABI.json';
 
-const WBTCBalance = ({ walletAddress }) => {
+const WBTC_ADDRESS = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'; // WBTC on Ethereum Mainnet
+
+export default function WBTCBalance({ walletAddress }) {
   const [balance, setBalance] = useState(null);
-  const [symbol, setSymbol] = useState('');
-
-  const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
-  const WBTCAddress = '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c'; // WBTC on BSC
+  const [symbol, setSymbol] = useState('WBTC');
 
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const contract = new ethers.Contract(WBTCAddress, ERC20ABI, provider);
+        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+        const contract = new ethers.Contract(WBTC_ADDRESS, erc20ABI, provider);
         const rawBalance = await contract.balanceOf(walletAddress);
         const decimals = await contract.decimals();
-        const tokenSymbol = await contract.symbol();
-        const formattedBalance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals)).toFixed(6);
-
-        setBalance(formattedBalance);
-        setSymbol(tokenSymbol);
+        const symbol = await contract.symbol();
+        const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
+        setBalance(parseFloat(formattedBalance).toFixed(4));
+        setSymbol(symbol);
       } catch (error) {
         console.error('Error fetching WBTC balance:', error);
       }
     };
 
-    if (walletAddress) {
-      fetchBalance();
-    }
+    if (walletAddress) fetchBalance();
   }, [walletAddress]);
 
   return (
@@ -36,6 +33,4 @@ const WBTCBalance = ({ walletAddress }) => {
       <strong>WBTC Balance:</strong> {balance ? ${balance} ${symbol} : 'Loading...'}
     </div>
   );
-};
-
-export default WBTCBalance;
+}
